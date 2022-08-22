@@ -8,10 +8,12 @@ let tweets = [
     {
         id: "1",
         text: "first hello",
+        userId: "2",
     },
     {
         id: "2",
         text: "second hello",
+        userId: "1",
     },
 ];
 
@@ -53,7 +55,7 @@ const typeDefs = gql`
     }
 
     type Mutation {
-        postTweet(text: String!, userId: ID!): Tweet!
+        postTweet(text: String!, userId: ID!): Tweet
         deleteTweet(id: ID!): Boolean!
     }
 `;
@@ -90,9 +92,13 @@ const resolvers = {
 
     Mutation: {
         postTweet(_, { text, userId }){
+            const findUser = users.find((user) => user.id === userId);
+            if(!findUser) return null;
+
             const newTweet = {
                 id: tweets.length + 1,
                 text,
+                userId,
             };
             tweets.push(newTweet);
             return newTweet;
@@ -109,16 +115,22 @@ const resolvers = {
         // [field(type) resolver]
         // -> if user requires a field that is not on the 'data', gql will look for it on the 'resolver'
         // -> and if there is a field resolver, it will call it
-        
+
         // fullName(){
         // fullName(root){
         fullName({ firstName, lastName }){
             console.log("fullName called");
             // console.log(root);
             console.log(`${firstName} ${lastName}`);
-            return "hello";
-        }
-    }
+            return `${firstName} ${lastName}`;
+        },
+    },
+
+    Tweet: {
+        author({ userId }){
+            return users.find(user => user.id === userId);
+        },
+    },
 };
 
 const server = new ApolloServer({typeDefs, resolvers});
