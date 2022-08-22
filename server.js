@@ -3,6 +3,7 @@
 import { ApolloServer, gql } from "apollo-server";
 // 2. normal way
 // const { ApolloServer, gql } = require("apollo-server");
+import fetch from "node-fetch";
 
 let tweets = [
     {
@@ -38,9 +39,15 @@ const typeDefs = gql`
         id: ID!
         firstName: String!
         lastName: String!
+        """
+        You can write descriptions on fields too!
+        """
         fullName: String!
     }
 
+    """
+    You can write descriptions like this. It will automatically show this in the API docs
+    """
     type Tweet {
         id: ID!
         text: String!
@@ -52,11 +59,41 @@ const typeDefs = gql`
         allTweets: [Tweet!]!
         tweet(id: ID!): Tweet
         ping: String!
+
+        allMovies: [Movie!]!
+        movie(id: String!): Movie
     }
 
     type Mutation {
         postTweet(text: String!, userId: ID!): Tweet
+        """
+        Deletes a Tweet if found, else returns false
+        """
         deleteTweet(id: ID!): Boolean!
+    }
+
+    type Movie {
+        id: Int!
+        url: String!
+        imdb_code: String!
+        title: String!
+        title_english: String!
+        title_long: String!
+        slug: String!
+        year: Int!
+        rating: Float!
+        runtime: Float!
+        genres: [String]!
+        summary: String
+        description_full: String!
+        synopsis: String
+        yt_trailer_code: String!
+        language: String!
+        background_image: String!
+        background_image_original: String!
+        small_cover_image: String!
+        medium_cover_image: String!
+        large_cover_image: String!
     }
 `;
 
@@ -87,7 +124,19 @@ const resolvers = {
         allUsers(){
             console.log("allUsers called");
             return users;
-        }
+        },
+
+        allMovies(){
+            return fetch("https://yts.mx/api/v2/list_movies.json")
+            .then(res=>res.json())
+            .then(json => json.data.movies);
+        },
+
+        movie(_, { id }){
+            return fetch(`https://yts.mx/api/v2/movie_details.json?movie_id=${id}`)
+            .then(res=>res.json())
+            .then(json => json.data.movie);
+        },
     },
 
     Mutation: {

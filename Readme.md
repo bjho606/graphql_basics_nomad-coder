@@ -53,3 +53,13 @@ Resolver is how the types(that are defined) should work
     We can also make 'field resolvers' (not only 'type resolver')
         -> If a user requires a field that is not on the database, gql will look for it on the resolver(by root arguement), and if there is a field resolver, it will call it
 
+## Documentation
+GraphQL has a built-in documentation function!
+All you have to do is write documents between `""" """`
+
+<br>
+
+---
+## Migrating REST to GraphQL
+1. Make schema(type, resolver) of the REST API for GraphQL API
+2. request in gql
