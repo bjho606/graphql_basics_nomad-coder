@@ -15,15 +15,28 @@ let tweets = [
     },
 ];
 
+let users = [
+    {
+        id: "1",
+        firstName: "nico",
+        lastName: "ssam",
+    },
+    {
+        id: "2",
+        firstName: "elon",
+        lastName: "mask",
+    },
+];
+
 // must explain the 'shape(type) of data'(=schema definition language) to graphql
 // 'typeDef' is making a gql structure
 // !![IMPORTANT] the 'type Query' is MANDATORY! (You must define it!)
 const typeDefs = gql`
     type User {
         id: ID!
-        username: String!
-        firstname: String!
-        lastname: String
+        firstName: String!
+        lastName: String!
+        fullName: String!
     }
 
     type Tweet {
@@ -33,6 +46,7 @@ const typeDefs = gql`
     }
 
     type Query {
+        allUsers: [User!]!
         allTweets: [Tweet!]!
         tweet(id: ID!): Tweet
         ping: String!
@@ -66,6 +80,11 @@ const resolvers = {
         // },
         tweet(root, {id}){
             return tweets.find(tweet => tweet.id === id);
+        },
+
+        allUsers(){
+            console.log("allUsers called");
+            return users;
         }
     },
 
@@ -85,6 +104,21 @@ const resolvers = {
             return true;
         },
     },
+
+    User: {
+        // [field(type) resolver]
+        // -> if user requires a field that is not on the 'data', gql will look for it on the 'resolver'
+        // -> and if there is a field resolver, it will call it
+        
+        // fullName(){
+        // fullName(root){
+        fullName({ firstName, lastName }){
+            console.log("fullName called");
+            // console.log(root);
+            console.log(`${firstName} ${lastName}`);
+            return "hello";
+        }
+    }
 };
 
 const server = new ApolloServer({typeDefs, resolvers});

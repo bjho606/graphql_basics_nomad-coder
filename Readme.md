@@ -50,3 +50,6 @@ Resolver is how the types(that are defined) should work
     'Arguements' (that is sent from user) are going to be in the 'SECOND' position(arguement) of the resolver function
         -> the first arguement is 'the root arguement'
 
+    We can also make 'field resolvers' (not only 'type resolver')
+        -> If a user requires a field that is not on the database, gql will look for it on the resolver(by root arguement), and if there is a field resolver, it will call it
+
