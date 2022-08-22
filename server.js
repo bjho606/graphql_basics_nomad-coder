@@ -5,28 +5,30 @@ import { ApolloServer, gql } from "apollo-server";
 // const { ApolloServer, gql } = require("apollo-server");
 
 // must explain the 'shape(type) of data'(=schema definition language) to graphql
+// 'typeDef' is making a gql structure
 // !![IMPORTANT] the 'type Query' is MANDATORY! (You must define it!)
-// -> it is like making 'GET /url` in rest API
 const typeDefs = gql`
     type User {
-        id: ID
-        username: String
+        id: ID!
+        username: String!
+        firstname: String!
+        lastname: String
     }
 
     type Tweet {
-        id: ID
-        text: String
-        author: User
+        id: ID!
+        text: String!
+        author: User!
     }
 
     type Query {
-        allTweets: [Tweet]
-        tweet(id: ID): Tweet
+        allTweets: [Tweet!]!
+        tweet(id: ID!): Tweet
     }
 
     type Mutation {
-        postTweet(text: String, userId: ID): Tweet
-        deleteTweet(id: ID): Boolean
+        postTweet(text: String!, userId: ID!): Tweet!
+        deleteTweet(id: ID!): Boolean!
     }
 `;
 
